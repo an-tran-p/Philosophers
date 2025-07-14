@@ -6,7 +6,7 @@
 /*   By: atran <atran@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 15:56:16 by atran             #+#    #+#             */
-/*   Updated: 2025/07/12 16:26:08 by atran            ###   ########.fr       */
+/*   Updated: 2025/07/14 22:18:40 by atran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	check_valid_args(char **argv)
 	if (argv[5])
 	{
 		if (ft_atoi(argv[5]) < 0 || check_n_digit(argv[5]))
-			return (printf("Invalid time_must_eat\n"), 1);
+			return (printf("Invalid times_must_eat\n"), 1);
 		if (ft_atoi(argv[5]) == 0)
 			exit(0);
 	}
@@ -48,8 +48,13 @@ int	check_valid_args(char **argv)
 
 int	main(int argc, char **argv)
 {
+	t_program	program;
+
 	if (argc != 5 && argc != 6)
 		return (printf("Wrong arguments count\n"), 1);
 	else if (check_valid_args(argv))
 		return (1);
+	if (init_program(&program, argv))
+		return (1);
+	return (0);
 }
