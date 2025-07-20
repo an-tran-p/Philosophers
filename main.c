@@ -6,42 +6,34 @@
 /*   By: atran <atran@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 15:56:16 by atran             #+#    #+#             */
-/*   Updated: 2025/07/14 22:18:40 by atran            ###   ########.fr       */
+/*   Updated: 2025/07/20 23:01:58 by atran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	check_n_digit(char *s)
+int	creating_threads(t_program *program)
 {
 	int	i;
 
+	if (pthread_create(&program->monitor, NULL, &monitoring, program))
+		destroy_all("Failed creating thread", program, 1);
 	i = 0;
-	while (s[i])
+	while (i < program->nb_philo)
 	{
-		if (s[i] < '0' || s[i] > '9')
-			return (1);
+		if (pthread_create(&program->philos[i].thread, NULL, &routine,
+				&program->philos[i]))
+			destroy_all("Failed creating thread", program, 1);
 		i++;
 	}
-	return (0);
-}
-
-int	check_valid_args(char **argv)
-{
-	if (ft_atoi(argv[1]) <= 0 || check_n_digit(argv[1]))
-		return (printf("Invalid number of philosophers\n"), 1);
-	if (ft_atoi(argv[2]) <= 0 || check_n_digit(argv[2]))
-		return (printf("Invalid time_to_die\n"), 1);
-	if (ft_atoi(argv[3]) <= 0 || check_n_digit(argv[3]))
-		return (printf("Invalid time_to_eat\n"), 1);
-	if (ft_atoi(argv[4]) <= 0 || check_n_digit(argv[4]))
-		return (printf("Invalid time_to_sleep\n"), 1);
-	if (argv[5])
+	if (pthread_join(program->monitor, NULL))
+		destroy_all("Failed joining thread", program, 1);
+	i = 0;
+	while (i < program->nb_philo)
 	{
-		if (ft_atoi(argv[5]) < 0 || check_n_digit(argv[5]))
-			return (printf("Invalid times_must_eat\n"), 1);
-		if (ft_atoi(argv[5]) == 0)
-			exit(0);
+		if (pthread_join(program->philos[i].thread, NULL))
+			destroy_all("Failed creating thread", program, 1);
+		i++;
 	}
 	return (0);
 }
@@ -56,5 +48,7 @@ int	main(int argc, char **argv)
 		return (1);
 	if (init_program(&program, argv))
 		return (1);
+	creating_threads(&program);
+	destroy_all(NULL, &program, 0);
 	return (0);
 }
