@@ -6,7 +6,7 @@
 /*   By: atran <atran@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 15:56:16 by atran             #+#    #+#             */
-/*   Updated: 2025/07/28 18:18:04 by atran            ###   ########.fr       */
+/*   Updated: 2025/07/28 18:25:19 by atran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,22 +24,23 @@ void	print_die_msg(t_program *program, char *str, int id)
 
 int	check_if_die(t_program *program)
 {
-	int	i;
+	int		i;
+	size_t	time_since_last_eat;
 
 	i = 0;
 	while (i < program->nb_philo)
 	{
 		pthread_mutex_lock(&program->philos[i].meals_lock);
-		if ((get_time() - program->philos[i].last_meal) > program->time_to_die)
+		time_since_last_eat = get_time() - program->philos[i].last_meal;
+		pthread_mutex_unlock(&program->philos[i].meals_lock);
+		if (time_since_last_eat > program->time_to_die)
 		{
 			pthread_mutex_lock(&program->dead_lock);
 			program->dead = 1;
 			print_die_msg(program, "DIED", program->philos[i].id);
 			pthread_mutex_unlock(&program->dead_lock);
-			pthread_mutex_unlock(&program->philos[i].meals_lock);
 			return (1);
 		}
-		pthread_mutex_unlock(&program->philos[i].meals_lock);
 		i++;
 	}
 	return (0);
