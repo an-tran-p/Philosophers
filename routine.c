@@ -29,15 +29,22 @@ void	thinking(t_philo *philo)
 
 void	eating(t_philo *philo)
 {
-	pthread_mutex_lock(philo->r_fork);
-	print_msg(philo->program, "has taken a fork", philo->id);
-	if (philo->program->nb_philo == 1)
+	pthread_mutex_t *first;
+	pthread_mutex_t *second;
+
+	if (philo->r_fork < philo->l_fork)
 	{
-		ft_usleep(philo->program, philo->program->time_to_die);
-		pthread_mutex_unlock(philo->r_fork);
-		return ;
+		first = philo->r_fork;
+		second = philo->l_fork;
 	}
-	pthread_mutex_lock(philo->l_fork);
+	else
+	{
+		first = philo->l_fork;
+		second = philo->r_fork;
+	}
+	pthread_mutex_lock(first);
+	print_msg(philo->program, "has taken a fork", philo->id);
+	pthread_mutex_lock(second);
 	print_msg(philo->program, "has taken a fork", philo->id);
 	print_msg(philo->program, "is eating", philo->id);
 	pthread_mutex_lock(&philo->meals_lock);
@@ -45,8 +52,8 @@ void	eating(t_philo *philo)
 	philo->last_meal = get_time();
 	pthread_mutex_unlock(&philo->meals_lock);
 	ft_usleep(philo->program, philo->program->time_to_eat);
-	pthread_mutex_unlock(philo->r_fork);
-	pthread_mutex_unlock(philo->l_fork);
+	pthread_mutex_unlock(first);
+	pthread_mutex_unlock(second);
 }
 
 void	sleeping(t_philo *philo)
@@ -67,7 +74,13 @@ void	*routine(void *arg)
 		thinking(philo);
 		if (is_dead(philo->program))
 			break ;
-		eating(philo);
+		if (philo->program->nb_philo == 1)
+		{
+			print_msg(philo->program, "has taken a fork", philo->id);
+			break;
+		}
+		else
+			eating(philo);
 		if (is_dead(philo->program))
 			break ;
 		sleeping(philo);

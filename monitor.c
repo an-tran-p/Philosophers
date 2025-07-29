@@ -66,7 +66,6 @@ int	check_all_ate(t_program *program)
 	if (enough_eat == program->nb_philo)
 	{
 		pthread_mutex_lock(&program->dead_lock);
-		printf("ALL HAS EATEN\n");
 		program->dead = 1;
 		pthread_mutex_unlock(&program->dead_lock);
 		return (1);
@@ -79,10 +78,12 @@ void	*monitoring(void *arg)
 	t_program	*program;
 
 	program = (t_program *)arg;
+	ft_usleep(program, 1);
 	while (1)
 	{
 		if (check_all_ate(program) || check_if_die(program))
 			break ;
+		ft_usleep(program, 1);
 	}
 	return (NULL);
 }
