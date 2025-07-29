@@ -16,8 +16,6 @@ int	creating_threads(t_program *program)
 {
 	int	i;
 
-	if (pthread_create(&program->monitor, NULL, &monitoring, program))
-		destroy_all("Failed creating thread", program, 1);
 	i = 0;
 	while (i < program->nb_philo)
 	{
@@ -26,8 +24,8 @@ int	creating_threads(t_program *program)
 			destroy_all("Failed creating thread", program, 1);
 		i++;
 	}
-	if (pthread_join(program->monitor, NULL))
-		destroy_all("Failed joining thread", program, 1);
+	if (pthread_create(&program->monitor, NULL, &monitoring, program))
+		destroy_all("Failed creating thread", program, 1);
 	i = 0;
 	while (i < program->nb_philo)
 	{
@@ -35,6 +33,8 @@ int	creating_threads(t_program *program)
 			destroy_all("Failed creating thread", program, 1);
 		i++;
 	}
+	if (pthread_join(program->monitor, NULL))
+		destroy_all("Failed joining thread", program, 1);
 	return (0);
 }
 

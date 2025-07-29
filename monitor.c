@@ -78,12 +78,12 @@ void	*monitoring(void *arg)
 	t_program	*program;
 
 	program = (t_program *)arg;
-	ft_usleep(program, 1);
+	ft_usleep(program, program->time_to_die * 0.8);
 	while (1)
 	{
 		if (check_all_ate(program) || check_if_die(program))
 			break ;
-		ft_usleep(program, 1);
+		ft_usleep(program, 5);
 	}
 	return (NULL);
 }
