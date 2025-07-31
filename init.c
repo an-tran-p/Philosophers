@@ -30,7 +30,8 @@ void	init_philos(t_philo *philos, t_program *p)
 		philos[i].id = i + 1;
 		philos[i].times_eaten = 0;
 		philos[i].last_meal = p->start_time;
-		pthread_mutex_init(&philos[i].meals_lock, NULL);
+		if (pthread_mutex_init(&philos[i].meals_lock, NULL))
+			destroy_all("mutex_init failed", p, 1);
 		philos[i].r_fork = &p->forks[i];
 		philos[i].l_fork = &p->forks[(i + 1) % p->nb_philo];
 		philos[i].program = p;
@@ -45,7 +46,8 @@ void	init_forks(pthread_mutex_t *forks, t_program *p)
 	i = 0;
 	while (i < p->nb_philo)
 	{
-		pthread_mutex_init(&forks[i], NULL);
+		if(pthread_mutex_init(&forks[i], NULL))
+			destroy_all("mutex_init failed", p, 1);
 		i++;
 	}
 }
@@ -70,7 +72,7 @@ int	init_program(t_program *p, char **argv)
 		return (free(p->philos), 1);
 	init_philos(p->philos, p);
 	init_forks(p->forks, p);
-	pthread_mutex_init(&p->print_lock, NULL);
-	pthread_mutex_init(&p->dead_lock, NULL);
+	if (pthread_mutex_init(&p->print_lock, NULL) || pthread_mutex_init(&p->dead_lock, NULL))
+		destroy_all("mutex_init failed", p, 1);
 	return (0);
 }

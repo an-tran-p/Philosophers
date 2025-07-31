@@ -25,6 +25,7 @@ int	is_dead(t_program *program)
 void	thinking(t_philo *philo)
 {
 	print_msg(philo->program, "is thinking", philo->id);
+	ft_usleep(philo->program, 1);
 }
 
 void	eating(t_philo *philo)
@@ -69,16 +70,14 @@ void	*routine(void *arg)
 	philo = (t_philo *)arg;
 	if (philo->id % 2 == 0)
 		ft_usleep(philo->program, 5);
+	if (philo->program->nb_philo == 1)
+		return(print_msg(philo->program, "has taken a fork", philo->id), NULL);
 	while (!is_dead(philo->program))
 	{
+		eating(philo);
+		if (is_dead(philo->program))
+			break ;
 		thinking(philo);
-		if (philo->program->nb_philo == 1)
-		{
-			print_msg(philo->program, "has taken a fork", philo->id);
-			break;
-		}
-		else
-			eating(philo);
 		if (is_dead(philo->program))
 			break ;
 		sleeping(philo);

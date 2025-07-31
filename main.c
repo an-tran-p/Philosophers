@@ -12,11 +12,25 @@
 
 #include "philo.h"
 
+void	update_start_time(t_program *program)
+{
+	int	i;
+
+	i = 0;
+	program->start_time = get_time();
+	while (i < program->nb_philo)
+	{
+		program->philos[i].last_meal= program->start_time;
+		i++;
+	}
+}
+
 int	creating_threads(t_program *program)
 {
 	int	i;
 
 	i = 0;
+	update_start_time(program);
 	while (i < program->nb_philo)
 	{
 		if (pthread_create(&program->philos[i].thread, NULL, &routine,

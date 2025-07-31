@@ -37,8 +37,8 @@ int	check_if_die(t_program *program)
 		{
 			pthread_mutex_lock(&program->dead_lock);
 			program->dead = 1;
-			print_die_msg(program, "DIED", program->philos[i].id);
 			pthread_mutex_unlock(&program->dead_lock);
+			print_die_msg(program, "DIED", program->philos[i].id);
 			return (1);
 		}
 		i++;
