@@ -68,12 +68,10 @@ void	*routine(void *arg)
 
 	philo = (t_philo *)arg;
 	if (philo->id % 2 == 0)
-		ft_usleep(philo->program, 1);
+		ft_usleep(philo->program, 5);
 	while (!is_dead(philo->program))
 	{
 		thinking(philo);
-		if (is_dead(philo->program))
-			break ;
 		if (philo->program->nb_philo == 1)
 		{
 			print_msg(philo->program, "has taken a fork", philo->id);
