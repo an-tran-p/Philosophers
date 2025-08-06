@@ -6,7 +6,7 @@
 /*   By: atran <atran@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 15:56:16 by atran             #+#    #+#             */
-/*   Updated: 2025/07/20 23:02:06 by atran            ###   ########.fr       */
+/*   Updated: 2025/08/06 15:01:59 by atran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ void	thinking(t_philo *philo)
 
 void	eating(t_philo *philo)
 {
-	pthread_mutex_t *first;
-	pthread_mutex_t *second;
+	pthread_mutex_t	*first;
+	pthread_mutex_t	*second;
 
 	if (philo->r_fork < philo->l_fork)
 	{
@@ -71,13 +71,13 @@ void	*routine(void *arg)
 	if (philo->id % 2 == 0)
 		ft_usleep(philo->program, 5);
 	if (philo->program->nb_philo == 1)
-		return(print_msg(philo->program, "has taken a fork", philo->id), NULL);
+		return (print_msg(philo->program, "has taken a fork", philo->id), NULL);
 	while (!is_dead(philo->program))
 	{
-		eating(philo);
+		thinking(philo);
 		if (is_dead(philo->program))
 			break ;
-		thinking(philo);
+		eating(philo);
 		if (is_dead(philo->program))
 			break ;
 		sleeping(philo);

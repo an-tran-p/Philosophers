@@ -6,18 +6,60 @@
 /*   By: atran <atran@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 15:56:16 by atran             #+#    #+#             */
-/*   Updated: 2025/07/20 22:02:57 by atran            ###   ########.fr       */
+/*   Updated: 2025/08/06 16:20:28 by atran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-size_t	get_time(void)
+void	mutex_fail_helper(t_program *program, int type)
 {
-	struct timeval	tv;
+	int	i;
 
-	gettimeofday(&tv, NULL);
-	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+	i = 0;
+	if (type == FORK)
+	{
+		while (i < program->nb_philo)
+		{
+			pthread_mutex_destroy(&program->philos[i].meals_lock);
+			i++;
+		}
+		return ;
+	}
+	while (i < program->nb_philo)
+	{
+		pthread_mutex_destroy(&program->forks[i]);
+		pthread_mutex_destroy(&program->philos[i].meals_lock);
+		i++;
+	}
+}
+
+void	mutex_fail(t_program *program, int type, int a)
+{
+	int	i;
+
+	i = -1;
+	if (type == PHILO && a >= 0)
+	{
+		while (i++ < a)
+			pthread_mutex_destroy(&program->philos[i].meals_lock);
+	}
+	if (type == FORK && a >= 0)
+	{
+		mutex_fail_helper(program, type);
+		while (i++ < a)
+			pthread_mutex_destroy(&program->forks[i]);
+	}
+	if (type == PRINT_L)
+		mutex_fail_helper(program, type);
+	if (type == DEAD_L)
+	{
+		mutex_fail_helper(program, type);
+		pthread_mutex_destroy(&program->print_lock);
+	}
+	free(program->forks);
+	free(program->philos);
+	exit(1);
 }
 
 void	init_philos(t_philo *philos, t_program *p)
@@ -31,7 +73,7 @@ void	init_philos(t_philo *philos, t_program *p)
 		philos[i].times_eaten = 0;
 		philos[i].last_meal = p->start_time;
 		if (pthread_mutex_init(&philos[i].meals_lock, NULL))
-			destroy_all("mutex_init failed", p, 1);
+			mutex_fail(p, PHILO, i);
 		philos[i].r_fork = &p->forks[i];
 		philos[i].l_fork = &p->forks[(i + 1) % p->nb_philo];
 		philos[i].program = p;
@@ -46,8 +88,8 @@ void	init_forks(pthread_mutex_t *forks, t_program *p)
 	i = 0;
 	while (i < p->nb_philo)
 	{
-		if(pthread_mutex_init(&forks[i], NULL))
-			destroy_all("mutex_init failed", p, 1);
+		if (pthread_mutex_init(&forks[i], NULL))
+			mutex_fail(p, FORK, i);
 		i++;
 	}
 }
@@ -72,7 +114,9 @@ int	init_program(t_program *p, char **argv)
 		return (free(p->philos), 1);
 	init_philos(p->philos, p);
 	init_forks(p->forks, p);
-	if (pthread_mutex_init(&p->print_lock, NULL) || pthread_mutex_init(&p->dead_lock, NULL))
-		destroy_all("mutex_init failed", p, 1);
+	if (pthread_mutex_init(&p->print_lock, NULL))
+		mutex_fail(p, PRINT_L, -1);
+	if (pthread_mutex_init(&p->dead_lock, NULL))
+		mutex_fail(p, DEAD_L, -1);
 	return (0);
 }

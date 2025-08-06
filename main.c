@@ -6,7 +6,7 @@
 /*   By: atran <atran@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 15:56:16 by atran             #+#    #+#             */
-/*   Updated: 2025/07/20 23:01:58 by atran            ###   ########.fr       */
+/*   Updated: 2025/08/06 16:14:09 by atran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	update_start_time(t_program *program)
 	program->start_time = get_time();
 	while (i < program->nb_philo)
 	{
-		program->philos[i].last_meal= program->start_time;
+		program->philos[i].last_meal = program->start_time;
 		i++;
 	}
 }

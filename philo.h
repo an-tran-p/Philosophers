@@ -6,7 +6,7 @@
 /*   By: atran <atran@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 15:34:35 by atran             #+#    #+#             */
-/*   Updated: 2025/07/20 23:02:19 by atran            ###   ########.fr       */
+/*   Updated: 2025/08/06 15:35:11 by atran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,11 @@
 # include <stdlib.h>
 # include <sys/time.h>
 # include <unistd.h>
+
+# define PHILO 0
+# define FORK 1
+# define PRINT_L 2
+# define DEAD_L 3
 
 typedef struct s_philo
 {
