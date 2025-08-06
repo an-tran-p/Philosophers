@@ -6,7 +6,7 @@
 /*   By: atran <atran@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 19:22:18 by atran             #+#    #+#             */
-/*   Updated: 2025/08/06 15:57:51 by atran            ###   ########.fr       */
+/*   Updated: 2025/08/06 17:57:49 by atran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,13 +76,13 @@ void	print_msg(t_program *program, char *str, int id)
 {
 	size_t	time;
 
-	time = get_time() - program->start_time;
+	pthread_mutex_lock(&program->print_lock);
 	if (!is_dead(program))
 	{
-		pthread_mutex_lock(&program->print_lock);
+		time = get_time() - program->start_time;
 		printf("%zu %d %s\n", time, id, str);
-		pthread_mutex_unlock(&program->print_lock);
 	}
+	pthread_mutex_unlock(&program->print_lock);
 }
 
 void	ft_usleep(t_program *program, size_t duration)
